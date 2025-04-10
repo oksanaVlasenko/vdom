@@ -5,7 +5,7 @@ A lightweight, custom JavaScript framework inspired by Vue.js for building react
 ## Features
 
 - **Declarative Rendering**: Define your UI using HTML-like templates.
-- **Reactivity**: The UI automatically updates whenever the state changes.
+- **Reactivity**: The UI automatically updates whenever the state changes, supporting ref, reactive, and computed properties.
 - **Event Handling**: Bind event listeners (like `click`) directly to state methods using `data-on` attributes.
 - **Lifecycle Hooks**: Support for `created`, `beforeDestroy`, and `destroy` lifecycle methods.
 - **Virtual DOM**: Efficient rendering through a diffing algorithm to minimize reflows and repaint.
@@ -31,16 +31,19 @@ const app = createAppVue({
   template(state) {
     let temp = `<div>
       <button data-onclick="state.incrementCount">Increment</button>
-      <p>Count: ${state.count}</p>
+      <p>Count: ${state.count.value}</p>
     </div>`
 
     return parseTemplate(temp, state)
   } ,
   setup() {
     const count = ref(0)
+
     const incrementCount = () => {
-      this.count += 1;
+      count.value += 1;
     }
+
+    return { count, incrementCount }
   },
   created(state) {
     console.log("App has been created", state);
