@@ -35,7 +35,7 @@ const render = (vNode) => {
   if (typeof vNode === 'string') {
     return document.createTextNode(vNode);
   }
-
+  
   // we assume everything else to be a virtual element
   return renderElem(vNode);
 };

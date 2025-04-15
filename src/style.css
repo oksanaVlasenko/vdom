@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  margin: 2rem;
+  flex-direction: column;
+}
+
+.img-container {
+  width: 10rem;
+  height: 10rem;
+  margin-top: 1rem;
+
+  img {
+    width: 100%;
+  }
+}
+
+.text-span {
+  display: block;
+  color: rebeccapurple;
+}
+

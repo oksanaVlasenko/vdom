@@ -1,133 +1,13 @@
-import createElement from './vdom/createElement';
-import render from './vdom/render';
-import mount from './vdom/mount';
-import diff from './vdom/diff';
-import createState from './vdom/createState'
-import { ref, computed, reactive, watch, created } from './vdom/reactivity.js';
-import { createAppVue, parseTemplate, parseBtn } from './vdom/miniVue.js';
+import { ref, reactive } from './vdom/reactivity.js';
+import { createAppVue } from './vdom/miniVue.js';
 import { eventManager } from './vdom/eventListeners.js'
-
-// const initialState = {
-//   anotherCount: '4',
-//   name: 'Oksans',
-//   surname: 'Vlasenko'
-// }
-
-// const proxyHandler = () => {
-//   const vNewApp = createVApp(5);
-//   const patch = diff(vApp, vNewApp);
-
-//   // we might replace the whole $rootEl,
-//   // so we want the patch will return the new $rootEl
-//   $rootEl = patch($rootEl);
-
-//   vApp = vNewApp;
-// }
-
-// const state = createState(initialState, proxyHandler)
-
-// console.log(state, ' state')
-
-// function listOfState() {
-//   console.log(state, ' state IN LIST')
-//   const list = [];
-
-//   for (const s of Object.values(state)) {
-//     console.log(s, ' SSSS')
-//     list.push(createElement('li', {
-//       children: [s]
-//     }))
-//   }
-
-//   return list; 
-// }
-
-
-
-// function createVApp(count) {
-//   return createElement('div', {
-//     attrs: {
-//       id: 'app',
-//       dataCount: count, // we use the count here,
-//     },
-//     children: [
-//       'The current count is: ',
-//       String(count), // and here
-//       'Proxy: ',
-//       createElement('ul', {
-//         children: listOfState()
-//       }),
-//       createElement('li', {
-//         children: [
-//           'The current count is: '
-//         ]
-//       }),
-//       createElement('img', {
-//         attrs: {
-//           src: 'https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif',
-//         },
-//       })
-//     ],
-//   });
-// } 
-
-// let vApp = createVApp(0, state.anotherCount);
-// const $app = render(vApp);
-// let $rootEl = mount($app, document.getElementById('app'));
-
-
-// setInterval(() => {
-//   const n = Math.floor(Math.random() * 10);
-//   const vNewApp = createVApp(n);
-//   const patch = diff(vApp, vNewApp);
-
-//   // we might replace the whole $rootEl,
-//   // so we want the patch will return the new $rootEl
-//   $rootEl = patch($rootEl);
-
-//   vApp = vNewApp;
-// }, 1000);
-
-// setTimeout(() => {
-//   state.anotherCount = 'new count though reactivity'
-
-//   console.log(state, ' STATE UPDATED')
-// }, 5000);
-
-//console.log($app);
-
-const btnEl = createAppVue({
-  setup() {
-    const text = ref('click me')
-    const count = ref(0)
-    const btnClick = () => {
-      count.value++
-    }
-
-    return { text, count, btnClick }
-  },
-  template(state) {
-    const html = (strings, ...values) => String.raw({ raw: strings }, ...values);
-    let temp = html`
-      <div>
-        <button data-onclick="state.btnClick" style="color:blue;">${state.text.value}</button>
-        <p>Count: ${state.count.value}</p>
-      </div>
-    `
-
-    return parseTemplate(temp, state)
-  }
-})
-
-btnEl.mount('#app');
+import { parseHTMLString } from './vdom/htmlParser.js'
 
 const app = createAppVue({
   setup() {
-    const a = ref(1);
-    const b = ref(2);
     const imgUrl = ref('')
+    const isShown = ref(true)
 
-    const sum = computed(() => a.value + b.value);
     const obj = reactive({
       name: 'Oksana',
       surname: 'Vlasenko'
@@ -145,7 +25,11 @@ const app = createAppVue({
         })
     }
 
-    return { a, b, sum, obj, imgUrl, fetchUser };
+    const switchBlock = () => {
+      isShown.value = !isShown.value
+    }
+
+    return { obj, imgUrl, isShown, fetchUser, switchBlock };
   },
 
   created(state) {
@@ -158,20 +42,37 @@ const app = createAppVue({
 
   template(state) {
     let temp = `
-      <div>
-        <img src="${state.imgUrl.value}" alt='photo' />
-
-        <p value='example'>A: ${state.a.value}</p>
-        <p style="color:blue;">B: ${state.b.value}</p>
-        <p>Sum: ${state.sum.value}</p>
-        <h3 data-set="heafer" alt='title photo'> Name: ${state.obj.name}</h3>
-        <h2> Surname: ${state.obj.surname}</h2>
+      <div id="parentDiv" class="container">
+        <small> just text </small>
         
-        <button data-onclick="state.fetchUser">Change User</button>
+        <p v-if="${state.isShown.value}" style="color:red;">
+          Show if
+
+          <small class="text-span"> text in v-if </small>
+        </p>
+
+        <p v-else style="color:green;">
+          Show else
+
+          <small class="text-span"> text in v-else </small>
+        </p>
+
+        <button data-onclick="state.switchBlock">Switch p</button>
+
+        <section>
+          <div class='img-container'>
+            <img src="${state.imgUrl.value}" alt='photo' />
+          </div>
+
+          <h3> Name: ${state.obj.name}</h3>
+          <h2> Surname: ${state.obj.surname}</h2>
+
+          <button data-onclick="state.fetchUser">Change User</button>
+        </section>
       </div>
     `;
 
-    return parseTemplate(temp, state)
+    return parseHTMLString(temp, state)
   }
 });
 

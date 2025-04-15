@@ -9,6 +9,7 @@ A lightweight, custom JavaScript framework inspired by Vue.js for building react
 - **Event Handling**: Bind event listeners (like `click`) directly to state methods using `data-on` attributes.
 - **Lifecycle Hooks**: Support for `created`, `beforeDestroy`, and `destroy` lifecycle methods.
 - **Virtual DOM**: Efficient rendering through a diffing algorithm to minimize reflows and repaint.
+- **v-if / v-else**: Supports conditional rendering
 
 ## Installation
 
